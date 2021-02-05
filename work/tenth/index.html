@@ -17,17 +17,19 @@
         </div>
         <div class="search">
           <div class="search__text">
-            <input type="text" class="search__text__input" placeholder="検索する" data-js="search-word">
+            <input type="text" class="search__text__input" placeholder="検索する" data-js="search-word" value="犬">
           </div>
           <button class="search__btn" data-js="search-btn">検索する</button>
         </div>
         <div class="message"></div>
-        <ul class="lists"></ul>
+        <ul class="lists">
+        </ul>
       </div>
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script src="./js/appid.js"></script>
     <script>
+      console.log(appId);
       // 楽天ブックスの総合検索APIを使って製作してください。
       // answerの挙動を良く見てね！
       //
@@ -87,6 +89,83 @@
       //     <a class="btn-item" data-js="page-next" href="">次へ</a>
       //   </div>
       // </div>
+
+
+      //検索ボタンを押したら検索結果が1～20件表示される
+      //そうでない場合はエラー表記
+      //もし次へボタンを押すと1ページ目が消えて、2ページ目（21件目～）表示
+      //前へボタンを押すと、2ページ目が消えて1ページ目表示
+      //1ページ目で（前へ）に、最後のページで（次へ）に非活性クラスをつける
+      //1ページ目のみだとどちらにもつける
+      
+      $(function() {
+        var page;
+        var keyword = $('.search__text__input').val();
+        $('[data-js="search-btn"]').on('click',function() {
+          console.log(keyword);
+          Search(keyword);
+        });
+        $(document).on('click','[data-js="page-next"]',function() {
+          e.preventDefault();
+          
+          Search(keyword);
+                // if($(element).data('category-type')=== value) {
+                //       $(element).show(); 
+                //     } else {
+                //       $(element).hide();
+                //     }
+        });
+        function Search(keyword) {
+          console.log()
+          $.ajax({
+              url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+              type: 'GET',
+              datatype: 'json',
+              data: {
+              // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+                keyword: keyword,
+                hits: '20',
+                applicationId: appId, //(今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
+                booksGenreId: '001',
+                page: page,
+              }
+          }).done(function(data) {
+            // この中にデータ取得後の動きを記述していきます。
+            if(data.pageCount > 0) {
+              $.each(data.Items, function functionName(index,Item) {
+                console.log(Item.Item.author);
+                $('.lists').append("<li class='lists__item'>" +
+                              "<div class='lists__item__inner'>" +
+                              "<a href='" + Item.Item.itemUrl + "'class='lists__item__link' target='_blank'>" +
+                              "<img src='" + Item.Item.mediumImageUrl + "'class='lists__item__img' alt='" + Item.title + "'>" +
+                              "<p class='lists__item__detail'>作品名：" + Item.Item.title + '</p>' +
+                              "<p class='lists__item__detail'>作者　：" + Item.Item.author + '</p>' +
+                              "<p class='lists__item__detail'>出版社：" + Item.Item.publisherName + '</p>' + '</a>' +
+                              '</div>' + '</li>'
+                            );
+              })
+            } else {
+              $('.lists').before('<div class="coment"></div>');
+              coment = $('.coment');
+              coment.html('<p>検索結果が見つかりませんでした.</p>');
+            }
+              $('.lists').after('<div class="pager" data-js="pager">' +
+                          '<div class="counter">' +
+                          '<span class="counter-current">' + 
+                          '</span>/<span class="counter-all">' + '</span>' +
+                          '</div>' +
+                          '<div class="btn-wrapper">' +
+                          '<a class="btn-item" data-js="page-prev" href="">前へ</a>' +
+                          '<a class="btn-item" data-js="page-next" href="">次へ</a>' +
+                          '</div></div>'
+                          );
+            console.log(data);
+          }).fail(function(data) {
+            message = $('.message');
+            message.html('<p>リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
+          });
+        }
+      });
     </script>
   </body>
 </html>
