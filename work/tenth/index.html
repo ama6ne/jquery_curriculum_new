@@ -105,9 +105,9 @@
           console.log(keyword);
           Search(keyword);
         });
-        $(document).on('click','[data-js="page-next"]',function() {
+        $(document).on('click','[data-js="page-next"]',function(e) {
           e.preventDefault();
-  
+          console.log('nhtg');
           Search(keyword);
                 // if($(element).data('category-type')=== value) {
                 //       $(element).show(); 
@@ -155,7 +155,7 @@
                           '</span>/<span class="counter-all">' + '</span>' +
                           '</div>' +
                           '<div class="btn-wrapper">' +
-                          '<a class="btn-item" data-js="page-prev" href="">前へ</a>' +
+                          '<aaaaaaaa class="btn-item" data-js="page-prev" href="">前へ</a>' +
                           '<a class="btn-item" data-js="page-next" href="">次へ</a>' +
                           '</div></div>'
                           );
