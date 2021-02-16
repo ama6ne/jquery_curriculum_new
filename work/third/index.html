@@ -30,6 +30,18 @@
       // .eq() 引数に応じたindexの要素を指定します。
       // .addClass() クラスを追加します。
       // .removeClass() クラスを削除します。
+      // やりたいこと。
+      // navクラスのLiをクリック
+      // クリックした要素の取得
+      // 要素と同じ番号を表示
+      // 
+      $(function() {
+        $('.nav li').click(function() {
+          var index = $('.nav li').index(this);　//タブの番号を取得
+          console.log(index)
+          $('.contents li').addClass('is-hidden').eq(index).removeClass('is-hidden');
+        });
+      });
     </script>
   </body>
 </html>
